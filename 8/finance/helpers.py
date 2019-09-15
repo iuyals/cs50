@@ -18,6 +18,7 @@ def apology(message, code=400):
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
         return s
+        print("***code:",code)
     return render_template("apology.html", top=code, bottom=escape(message)), code
 
 

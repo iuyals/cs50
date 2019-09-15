@@ -8,7 +8,7 @@
     <form action="/sell" method="post">
 
         <div class="form-group">
-            <select class="form-control" name="selectedsymbol">
+            <select class="form-control" name="symbol">
                 <option disabled selected value="">Symbol</option>
                 {% for symbol in symbols %}
                     <option value={{ symbol }}>{{ symbol }} </option>
@@ -16,7 +16,7 @@
             </select>
         </div>
         <div>
-            <input type="number" name="nshare">
+            <input type="number" name="shares">
         </div>
         <button class="btn btn-primary" type="submit">Sell</button>
     </form>

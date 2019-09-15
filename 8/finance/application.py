@@ -102,38 +102,41 @@ def buy():
     """Buy shares of stock"""
     if request.method=="GET":
         return render_template("buy.html")
-    selectedsymbol=request.form.get("selectedsymbol")
-    nshare=request.form.get("nshare")
-    if not selectedsymbol or not nshare:
+    symbol=request.form.get("symbol")
+    shares=request.form.get("shares")
+    if not symbol or not shares:
         return apology("please input correct share symbol and number")
-    nshare=int(nshare)
-    if nshare<=0:
+    try:
+        shares=int(shares)
+    except:
+        return apology("input corect shares")
+    if shares<=0:
         return apology("please input positive number")
-    info=lookup(selectedsymbol)
+    info=lookup(symbol)
     if not info:
         return apology("no such symbol")
     user=dbsession.query(User).filter_by(id=session["user_id"])[0]
     usershares=dbsession.query(Shares).filter_by(owerid=session["user_id"])
 
     #check if enough cash
-    leftcash=user.cash-info["price"]*nshare
+    leftcash=user.cash-info["price"]*shares
     if leftcash<0:
         return apology("u need more cash to buy these")
     user.cash=leftcash
     dbsession.commit()
     history=History()
     history.owener_id=session["user_id"]
-    history.shares=nshare
+    history.shares=shares
     history.price=info["price"]
     history.symbol=info["symbol"]
     dbsession.add(history)
     dbsession.commit()
     for ashare in usershares:
-        print("*****two name***",ashare.name,selectedsymbol)
+        print("*****two name***",ashare.name,symbol)
 
-        if ashare.name.lower()==selectedsymbol.lower():
+        if ashare.name.lower()==symbol.lower():
             print("****not new share*****")
-            ashare.number+=nshare
+            ashare.number+=shares
             dbsession.add(user)
             dbsession.add(ashare)
             dbsession.commit()
@@ -143,7 +146,7 @@ def buy():
     newshare.name=info["symbol"]
     newshare.price=info["price"]
     newshare.owerid=session["user_id"]
-    newshare.number=nshare
+    newshare.number=shares
     dbsession.add(newshare)
     dbsession.commit()
 
@@ -153,7 +156,13 @@ def buy():
 @app.route("/check", methods=["GET"])
 def check():
     """Return true if username available, else false, in JSON format"""
-    return jsonify("TODO")
+    username=request.args.get("username")
+    print("****username:**",username)
+    try:
+        auser=dbsession.query(User).filter_by(username=username)[0]
+        return "false"
+    except:
+        return "true"
 
 
 @app.route("/history")
@@ -230,9 +239,9 @@ def quote():
         sendMethod="get"
     else:
         sendMethod="post"
-        if not request.form.get("companySymbol"):
+        if not request.form.get("symbol"):
             return apology("input symbol")
-        symbol=request.form.get("companySymbol")
+        symbol=request.form.get("symbol")
         info=lookup(symbol)
         if info is None:
             return apology("invalid symbol")
@@ -248,14 +257,26 @@ def register():
     """Register user"""
     if request.method=="GET":
         return render_template("register.html")
+    print("****1")
     username=request.form.get("username")
     password=request.form.get("password")
-    if not username or not password:
+    confirmation=request.form.get("confirmation")
+    if not username or not password or not confirmation:
         return apology("wrong name or pw")
-    newuser=User(username=username,hash=generate_password_hash(password))
-    dbsession.add(newuser)
-    dbsession.commit()
-    return apology("you have registered :>")
+
+    if not password==confirmation:
+        return apology("input password again")
+    print("***2")
+    try:
+        auser=dbsession.query(User).filter_by(username=username)[0]
+        return apology("the name used,select another")
+    except:
+        print("****name pass confo***",username,password,confirmation)
+        newuser=User(username=username,hash=generate_password_hash(password))
+        dbsession.add(newuser)
+        dbsession.commit()
+        return apology("you have registered :>",code=200)
+
 
 
 @app.route("/sell", methods=["GET", "POST"])
@@ -269,32 +290,32 @@ def sell():
     if request.method=="GET":
         return render_template("sell.html",symbols=symbols)
 
-    selectedsymbol=request.form.get("selectedsymbol")
-    nshare=request.form.get("nshare")
-    if not selectedsymbol or not nshare:
+    symbol=request.form.get("symbol")
+    shares=request.form.get("shares")
+    if not symbol or not shares:
         return apology("please input correct value")
 
-    nshare=int(nshare)
-    if nshare<=0:
+    shares=int(shares)
+    if shares<=0:
         return apology("please input positive number")
-    info=lookup(selectedsymbol)
+    info=lookup(symbol)
     user=dbsession.query(User).filter_by(id=session["user_id"])[0]
-    leftcash=user.cash+info["price"]*nshare
+    leftcash=user.cash+info["price"]*shares
     if leftcash<0:
         return apology("u need more cash to buy these")
     user.cash=leftcash
     dbsession.commit()
-    info=lookup(selectedsymbol)
+    info=lookup(symbol)
     history=History()
     history.owener_id=session["user_id"]
-    history.shares=-nshare
+    history.shares=-shares
     history.price=info["price"]
     history.symbol=info["symbol"]
     dbsession.add(history)
     dbsession.commit()
     for ashare in usershares:
-        if ashare.name==selectedsymbol:
-            ashare.number-=nshare
+        if ashare.name==symbol:
+            ashare.number-=shares
             if ashare.number<0:
                 return apology("you dont have enought share to sell")
             elif ashare.number==0:

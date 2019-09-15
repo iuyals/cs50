@@ -3,11 +3,10 @@
     {% if sendMethod =="get" %}
         <form action="/quote" method="post">
         <div class="form-group">
-            <input type="text" placeholder="Symbol" autofocus class="form-control" name="companySymbol"/>
+            <input type="text" placeholder="Symbol" autofocus class="form-control" name="symbol"/>
         </div>
-        <div class="form-group">
-            <button class="btn",type="submit">Submit</button>
-        </div>
+
+        <button class="btn btn-primary" type="submit">Quote</button>
 
         </form>
     {% else %}
