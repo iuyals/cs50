@@ -1,0 +1,17 @@
+body{
+    margin:25px 30px 40px 80px;
+}
+
+em{
+    font-size: 50px;
+}
+
+#myoverview{
+    font-size: 40px;
+}
+#mylist{
+    font-size: 30px;
+}
+#mytable{
+    font-size: 40px;
+}

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+    <!-- http://getbootstrap.com/docs/4.1/content/typography/ -->
+    <h1 class="mb-3">Form</h1>
+
+    <!-- http://getbootstrap.com/docs/4.1/components/forms/ -->
+    <form action="/form" method="post">
+
+        <!-- TODO -->
+        <input type="text" name="name" placeholder="Name"/>
+        <p></p>
+        <select name="house">
+            <option disabled selected>House</option>
+            <option value="xd">xd</option>
+            <option value="zd">zd</option>
+        </select>
+        <p></p>
+        <input type="radio" value="Beater" name="position"/> <label>Beater</label>
+        <p></p>
+        <input type="radio" value="Chaser" name="position"/> <label>Chaser</label>
+        <p></p>
+        <input type="radio" value="Keeper" name="position"/> <label>Keeper</label>
+        <p></p>
+        <input type="radio" value="Seeker" name="position"/> <label>Seeker</label>
+        <p></p>
+        <!-- http://getbootstrap.com/docs/4.1/components/buttons/ -->
+        <button class="btn btn-primary" type="submit">Submit</button>
+
+    </form>
+
+    <script>
+
+        /* TODO */
+
+    </script>
+
+{% endblock %}
