@@ -3,6 +3,8 @@
 
 
 
+
+
 int main(){
     long number;
     number=get_long("Number: ");
