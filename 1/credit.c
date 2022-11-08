@@ -2,6 +2,7 @@
 #include <cs50.h>
 
 
+
 int main(){
     long number;
     number=get_long("Number: ");
